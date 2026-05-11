@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: ku-budget
+    runtime: node
+    region: oregon
+    plan: free
+
+    # Step 1: install all workspace deps, then build the React frontend
+    buildCommand: npm install && npm run build
+
+    # Step 2: start Express (serves API + built SPA)
+    startCommand: npm start
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true   # Render auto-generates a secure random value
+      - key: PORT
+        value: 5000
