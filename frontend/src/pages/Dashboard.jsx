@@ -29,7 +29,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
   // Form states
   const [formContent, setFormContent] = useState({ category: '', amount: '', date: new Date().toISOString().split('T')[0] });
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const API_URL = import.meta.env.VITE_API_URL || '/api';
 
   const fetchData = async () => {
     try {
@@ -37,9 +37,9 @@ const Dashboard = ({ setIsAuthenticated }) => {
       const headers = { Authorization: `Bearer ${token}` };
 
       const [dashRes, expRes, revRes] = await Promise.all([
-        axios.get(`${API_URL}/api/dashboard`, { headers }),
-        axios.get(`${API_URL}/api/expenses`, { headers }),
-        axios.get(`${API_URL}/api/revenues`, { headers })
+        axios.get(`${API_URL}/dashboard`, { headers }),
+        axios.get(`${API_URL}/expenses`, { headers }),
+        axios.get(`${API_URL}/revenues`, { headers })
       ]);
 
       setData(dashRes.data);
@@ -93,7 +93,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      await axios.post(`${API_URL}/api/${type}`, formContent, {
+      await axios.post(`${API_URL}/${type}`, formContent, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchData();
@@ -111,7 +111,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`${API_URL}/api/${editData.type}/${editData.id}`, {
+      await axios.put(`${API_URL}/${editData.type}/${editData.id}`, {
         category: editData.category,
         amount: editData.amount,
         date: editData.date
@@ -131,7 +131,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
     if (!window.confirm('هل أنت متأكد أنك تريد حذف هذا السجل؟')) return;
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`${API_URL}/api/${type}/${id}`, {
+      await axios.delete(`${API_URL}/${type}/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchData();

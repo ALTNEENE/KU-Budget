@@ -15,7 +15,7 @@ const Login = ({ setIsAuthenticated }) => {
 
     try {
       const API_URL = import.meta.env.VITE_API_URL || '/api';
-      const res = await axios.post(`${API_URL}/api/auth/login`, {
+      const res = await axios.post(`${API_URL}/auth/login`, {
         email,
         password
       });
@@ -36,8 +36,8 @@ const Login = ({ setIsAuthenticated }) => {
     setSuccessMsg('');
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      const res = await axios.post(`${API_URL}/api/auth/change-password`, {
+      const API_URL = import.meta.env.VITE_API_URL || '/api';
+      const res = await axios.post(`${API_URL}/auth/change-password`, {
         email,
         oldPassword: password,
         newPassword
