@@ -233,7 +233,7 @@ const SECRET = JWT_SECRET || "karary_university_super_secret_key_dev_only";
 // On Vercel, frontend and backend are same-origin: /api/...
 const corsOptions = IS_PROD
   ? { origin: false }
-  : { origin: "http://localhost:5173" };
+  : { origin: "*" };
 
 app.use(cors(corsOptions));
 app.use(express.json());
