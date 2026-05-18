@@ -60,7 +60,7 @@
 //         return res.status(400).json({ error: 'Email and password are required' });
 //     }
 
-//     db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, user) => {
+//     db.get(`SELECT * FROM budget_users WHERE email = ?`, [email], (err, user) => {
 //         if (err) return res.status(500).json({ error: 'Database error' });
 //         if (!user) return res.status(400).json({ error: 'Invalid email or password' });
 
@@ -288,7 +288,7 @@ app.post("/api/auth/login", (req, res) => {
     return res.status(400).json({ error: "Email and password are required" });
   }
 
-  db.get("SELECT * FROM users WHERE email = ?", [email], (err, user) => {
+  db.get("SELECT * FROM budget_users WHERE email = ?", [email], (err, user) => {
     if (err) return res.status(500).json({ error: "Database error" });
     if (!user) return res.status(400).json({ error: "Invalid email or password" });
 
@@ -325,7 +325,7 @@ app.post("/api/auth/change-password", (req, res) => {
     return res.status(400).json({ error: "Email, old password, and new password are required" });
   }
 
-  db.get("SELECT * FROM users WHERE email = ?", [email], (err, user) => {
+  db.get("SELECT * FROM budget_users WHERE email = ?", [email], (err, user) => {
     if (err) return res.status(500).json({ error: "Database error" });
     if (!user) return res.status(400).json({ error: "Invalid email or password" });
 
@@ -337,7 +337,7 @@ app.post("/api/auth/change-password", (req, res) => {
 
     const hash = bcrypt.hashSync(newPassword, 10);
 
-    db.run("UPDATE users SET password = ? WHERE id = ?", [hash, user.id], (err) => {
+    db.run("UPDATE budget_users SET password = ? WHERE id = ?", [hash, user.id], (err) => {
       if (err) return res.status(500).json({ error: "Database error" });
       res.json({ message: "Password changed successfully" });
     });

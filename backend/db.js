@@ -75,7 +75,7 @@ const getPool = () => {
 
 const createTables = async (connection) => {
   await connection.query(`
-    CREATE TABLE IF NOT EXISTS users (
+    CREATE TABLE IF NOT EXISTS budget_users (
       id INT NOT NULL AUTO_INCREMENT,
       name VARCHAR(255) NOT NULL,
       email VARCHAR(255) NOT NULL,
@@ -83,7 +83,7 @@ const createTables = async (connection) => {
       role VARCHAR(50) NOT NULL DEFAULT 'user',
       created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (id),
-      UNIQUE KEY users_email_unique (email)
+      UNIQUE KEY budget_users_email_unique (email)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   `);
 
@@ -125,14 +125,14 @@ const seedAdmin = async (connection) => {
   const adminEmail = process.env.SEED_ADMIN_EMAIL || "admin@karary.edu.sd";
   const adminPassword = process.env.SEED_ADMIN_PASSWORD || "admin123";
 
-  const [existing] = await connection.execute("SELECT id FROM users WHERE email = ? LIMIT 1", [
+  const [existing] = await connection.execute("SELECT id FROM budget_users WHERE email = ? LIMIT 1", [
     adminEmail,
   ]);
 
   if (existing.length > 0) return;
 
   const hash = bcrypt.hashSync(adminPassword, 10);
-  await connection.execute("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)", [
+  await connection.execute("INSERT INTO budget_users (name, email, password, role) VALUES (?, ?, ?, ?)", [
     adminName,
     adminEmail,
     hash,
