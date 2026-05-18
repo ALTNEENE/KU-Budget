@@ -14,7 +14,7 @@ const Login = ({ setIsAuthenticated }) => {
     setError('');
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || '/api/api';
+      const API_URL = import.meta.env.VITE_API_URL || '/api';
       const res = await axios.post(`${API_URL}/auth/login`, {
         email,
         password
@@ -36,7 +36,7 @@ const Login = ({ setIsAuthenticated }) => {
     setSuccessMsg('');
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || '/api/api';
+      const API_URL = import.meta.env.VITE_API_URL || '/api';
       const res = await axios.post(`${API_URL}/auth/change-password`, {
         email,
         oldPassword: password,

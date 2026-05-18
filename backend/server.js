@@ -239,8 +239,22 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 // ── Health Check ───────────────────────────────────────────
-app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", environment: IS_PROD ? "production" : "development" });
+app.get("/api/health", async (req, res) => {
+  try {
+    await db.ready();
+    res.json({
+      status: "ok",
+      database: "mysql",
+      environment: IS_PROD ? "production" : "development",
+    });
+  } catch (error) {
+    console.error("Database health check failed:", error);
+    res.status(500).json({
+      status: "error",
+      database: "unavailable",
+      environment: IS_PROD ? "production" : "development",
+    });
+  }
 });
 
 // ── Auth Middleware ────────────────────────────────────────
@@ -303,6 +317,34 @@ app.post("/api/auth/login", (req, res) => {
 });
 
 // ── DASHBOARD ROUTE ────────────────────────────────────────
+// Password change route
+app.post("/api/auth/change-password", (req, res) => {
+  const { email, oldPassword, newPassword } = req.body;
+
+  if (!email || !oldPassword || !newPassword) {
+    return res.status(400).json({ error: "Email, old password, and new password are required" });
+  }
+
+  db.get("SELECT * FROM users WHERE email = ?", [email], (err, user) => {
+    if (err) return res.status(500).json({ error: "Database error" });
+    if (!user) return res.status(400).json({ error: "Invalid email or password" });
+
+    const validPassword = bcrypt.compareSync(oldPassword, user.password);
+
+    if (!validPassword) {
+      return res.status(400).json({ error: "Invalid email or password" });
+    }
+
+    const hash = bcrypt.hashSync(newPassword, 10);
+
+    db.run("UPDATE users SET password = ? WHERE id = ?", [hash, user.id], (err) => {
+      if (err) return res.status(500).json({ error: "Database error" });
+      res.json({ message: "Password changed successfully" });
+    });
+  });
+});
+
+// Dashboard route
 app.get("/api/dashboard", authenticate, (req, res) => {
   db.all("SELECT SUM(amount) as total FROM revenues", [], (err, revRow) => {
     if (err) return res.status(500).json({ error: "Database error" });
